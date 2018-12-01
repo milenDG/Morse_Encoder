@@ -4,6 +4,11 @@
 #define __SFR_OFFSET 0
 #include <avr/io.h>
 
+	DOT_GAP = 10 	; 100 ms
+	DASH_GAP = 30	; 300 ms
+	LETTER_GAP = 70	; 700 ms
+	END_OF_MESSAGE = 100	; 1s
+	
 ;;; Definitions of all the letters:
 ;;;( First 4 bits hold the length and last 4 hold the sequence of dots and dashes.
 ;;; The sequence is stored opposite as the signals are sent
@@ -13,7 +18,7 @@
 ;;;      ||       ||
 ;;;      ||       ||
 ;;;      XX       XX
-;;;    length   sequence
+;;;    length  sequence
 ;;; e.g. 0b0011 0011 - means 3 morse symbols: Dash -> Dash -> Dot  ===> the letter G
 	
 	;; Letters with length of 1
@@ -87,7 +92,7 @@ encode_all_letters:
 ;;; make a pause after finished the message.
 end_of_message:
 ;;; Make the 1 second delay.
-	ldi r24, 100
+	ldi r24, END_OF_MESSAGE
 	call delay_cs
 	jmp endless_cycle		; Repeat the message forever.
 
@@ -117,7 +122,7 @@ encoding:
 ;;; Delete the last symbol and move others to the right.
 	rjmp encoding
 1:
-	ldi r24, 50
+	ldi r24, LETTER_GAP
 	call delay_cs
 	reti
 
@@ -134,12 +139,12 @@ encode_symbol:
 
 dot_delay:
 ;;; Make a 100ms delay for a dot.
-	ldi r24, 10
+	ldi r24, DOT_GAP
 	call delay_cs
 	rjmp 1f
 dash_delay:
 ;;; Make a 300ms delay for a dash.
-	ldi r24, 30
+	ldi r24, DASH_GAP
 	call delay_cs
 	rjmp 1f
 
@@ -152,8 +157,8 @@ dash_delay:
 	reti
 
 ;;; Length of the array and the array holding the massage.
-	LENGTH = 5
+	LENGTH = 26
 	.global message
 	.type   message, @object
 message:
-	.byte	M, I, L, E, N,
+	.byte	A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z
